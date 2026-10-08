@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { paymentsService } from "@/lib/api/services/payments";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { PaymentHistoryView } from "@/components/features/payments/PaymentHistoryView";
 
-export default function TenantPaymentsPage() {
+export const metadata: Metadata = {
+  title: "Payment History",
+  description: "View your historical rental and utility payment receipts.",
+};
+
+export default async function TenantPaymentsPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.payments.history(),
+      queryFn: () => paymentsService.getHistory(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Payment History"
-        description="Review all confirmed transactions, Stripe charge IDs, and payment methods."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Payment transaction history coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <PaymentHistoryView />
+    </HydrationBoundary>
   );
 }
