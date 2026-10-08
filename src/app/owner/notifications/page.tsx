@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { notificationsService } from "@/lib/api/services/notifications";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { NotificationsView } from "@/components/features/notifications/NotificationsView";
 
-export default function OwnerNotificationsPage() {
+export const metadata: Metadata = {
+  title: "Owner Notifications",
+  description: "Stay updated with viewing bookings, tenant applications, and maintenance alerts.",
+};
+
+export default async function OwnerNotificationsPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.notifications.all(false),
+      queryFn: () => notificationsService.getAll(serverFetch, { unread: false }),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Owner Notifications"
-        description="Stay updated with incoming viewing requests, applications, and repair tickets."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Notifications center coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <NotificationsView />
+    </HydrationBoundary>
   );
 }
