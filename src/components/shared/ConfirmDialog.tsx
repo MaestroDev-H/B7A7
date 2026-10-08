@@ -22,7 +22,9 @@ export interface ConfirmDialogProps {
   title: string;
   description: React.ReactNode;
   confirmLabel?: string;
+  confirmText?: string;
   cancelLabel?: string;
+  cancelText?: string;
   variant?: "default" | "destructive";
   onConfirm: () => Promise<void> | void;
   isLoading?: boolean;
@@ -34,12 +36,16 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  confirmText,
+  cancelLabel,
+  cancelText,
   variant = "default",
   onConfirm,
   isLoading = false,
 }: ConfirmDialogProps) {
+  const finalConfirmLabel = confirmText || confirmLabel || "Confirm";
+  const finalCancelLabel = cancelText || cancelLabel || "Cancel";
   const [internalLoading, setInternalLoading] = React.useState(false);
   const loading = isLoading || internalLoading;
 
@@ -70,7 +76,7 @@ export function ConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">
           <AlertDialogCancel disabled={loading}>
-            {cancelLabel}
+            {finalCancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
@@ -86,7 +92,7 @@ export function ConfirmDialog({
                 Processing...
               </>
             ) : (
-              confirmLabel
+              finalConfirmLabel
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

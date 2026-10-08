@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,8 +10,9 @@ export interface PaginationProps {
   page: number;
   totalPages: number;
   totalItems?: number;
+  total?: number;
   limit?: number;
-  onPageChange: (newPage: number) => void;
+  onPageChange?: (newPage: number) => void;
   className?: string;
 }
 
@@ -18,16 +20,32 @@ export function Pagination({
   page,
   totalPages,
   totalItems,
+  total,
   limit = 10,
   onPageChange,
   className,
 }: PaginationProps) {
-  if (totalPages <= 1 && (!totalItems || totalItems <= limit)) {
+  const router = useRouter();
+  const count = total !== undefined ? total : totalItems;
+
+  const handlePageChange = (newPage: number) => {
+    if (onPageChange) {
+      onPageChange(newPage);
+      return;
+    }
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      params.set("page", String(newPage));
+      router.push(`?${params.toString()}`);
+    }
+  };
+
+  if (totalPages <= 1 && (!count || count <= limit)) {
     return null;
   }
 
   const startItem = (page - 1) * limit + 1;
-  const endItem = totalItems !== undefined ? Math.min(page * limit, totalItems) : page * limit;
+  const endItem = count !== undefined ? Math.min(page * limit, count) : page * limit;
 
   return (
     <div
@@ -37,11 +55,11 @@ export function Pagination({
       )}
     >
       <div>
-        {totalItems !== undefined ? (
+        {count !== undefined ? (
           <span>
             Showing <strong className="text-foreground">{startItem}</strong>–
             <strong className="text-foreground">{endItem}</strong> of{" "}
-            <strong className="text-foreground">{totalItems}</strong> items
+            <strong className="text-foreground">{count}</strong> items
           </span>
         ) : (
           <span>
@@ -56,7 +74,7 @@ export function Pagination({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => onPageChange(1)}
+          onClick={() => handlePageChange(1)}
           disabled={page <= 1}
           aria-label="First page"
         >
@@ -66,7 +84,7 @@ export function Pagination({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => onPageChange(page - 1)}
+          onClick={() => handlePageChange(page - 1)}
           disabled={page <= 1}
           aria-label="Previous page"
         >
@@ -81,7 +99,7 @@ export function Pagination({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => onPageChange(page + 1)}
+          onClick={() => handlePageChange(page + 1)}
           disabled={page >= totalPages}
           aria-label="Next page"
         >
@@ -91,7 +109,7 @@ export function Pagination({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => onPageChange(totalPages)}
+          onClick={() => handlePageChange(totalPages)}
           disabled={page >= totalPages}
           aria-label="Last page"
         >
