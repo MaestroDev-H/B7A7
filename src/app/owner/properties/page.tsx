@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { propertiesService } from "@/lib/api/services/properties";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { OwnerPropertiesView } from "@/components/features/owner/OwnerPropertiesView";
 
-export default function OwnerPropertiesPage() {
+export const metadata: Metadata = {
+  title: "My Properties",
+  description: "Manage your listings, rooms, and publish visibility.",
+};
+
+export default async function OwnerPropertiesPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.properties.my(),
+      queryFn: () => propertiesService.getMyProperties(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="My Properties"
-        description="Manage your listed residential properties, room inventories, and occupancy rates."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Owner properties management table coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <OwnerPropertiesView />
+    </HydrationBoundary>
   );
 }
