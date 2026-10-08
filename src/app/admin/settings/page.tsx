@@ -4,14 +4,22 @@ import { serverFetch } from "@/lib/api/http.server";
 import { usersService } from "@/lib/api/services/users";
 import { queryKeys } from "@/lib/queries/keys";
 import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
-import { ProfileSettings } from "@/components/features/profile/ProfileSettings";
+import { AdminSettingsView } from "@/components/features/admin/AdminSettingsView";
 
 export const metadata: Metadata = {
   title: "Admin Settings",
-  description: "Administrator account profile and system preferences.",
+  description: "Administrator account profile, credentials, and system environment info.",
 };
 
 export default async function AdminSettingsPage() {
+  const apiUrl = process.env.API_BASE_URL || "https://api.nestly.local/api/v1";
+  let hostname = "api.nestly.local";
+  try {
+    hostname = new URL(apiUrl).hostname;
+  } catch {
+    hostname = apiUrl;
+  }
+
   const dehydratedState = await prefetchAndDehydrate([
     {
       queryKey: queryKeys.auth.me,
@@ -21,7 +29,7 @@ export default async function AdminSettingsPage() {
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ProfileSettings />
+      <AdminSettingsView apiHostname={hostname} appVersion="1.0.0" />
     </HydrationBoundary>
   );
 }
