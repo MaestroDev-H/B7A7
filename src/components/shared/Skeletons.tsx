@@ -72,12 +72,15 @@ export function CardGridSkeleton({
 export function TableSkeleton({
   rows = 5,
   cols = 4,
+  columns,
   className,
 }: {
   rows?: number;
   cols?: number;
+  columns?: number;
   className?: string;
 }) {
+  const columnCount = columns ?? cols;
   return (
     <div
       className={cn(
@@ -91,12 +94,12 @@ export function TableSkeleton({
       </div>
       {Array.from({ length: rows }).map((_, r) => (
         <div key={`row-${r}`} className="flex items-center gap-4 py-1.5">
-          {Array.from({ length: cols }).map((_, c) => (
+          {Array.from({ length: columnCount }).map((_, c) => (
             <Skeleton
               key={`col-${r}-${c}`}
               className={cn(
                 "h-4",
-                c === 0 ? "w-1/3" : c === cols - 1 ? "w-1/6 ml-auto" : "w-1/4"
+                c === 0 ? "w-1/3" : c === columnCount - 1 ? "w-1/6 ml-auto" : "w-1/4"
               )}
             />
           ))}
@@ -135,7 +138,13 @@ export function DetailSkeleton({ className }: { className?: string }) {
   );
 }
 
-export function FormSkeleton({ className }: { className?: string }) {
+export function FormSkeleton({
+  fields = 4,
+  className,
+}: {
+  fields?: number;
+  className?: string;
+}) {
   return (
     <Card className={cn("p-6 space-y-6 max-w-2xl", className)}>
       <div className="space-y-2">
@@ -143,24 +152,12 @@ export function FormSkeleton({ className }: { className?: string }) {
         <Skeleton className="h-4 w-2/3" />
       </div>
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-24 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-16" />
+        {Array.from({ length: fields }).map((_, i) => (
+          <div key={`field-${i}`} className="space-y-2">
+            <Skeleton className="h-4 w-24" />
             <Skeleton className="h-10 w-full" />
           </div>
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-        </div>
+        ))}
         <Skeleton className="h-10 w-32 mt-4" />
       </div>
     </Card>
