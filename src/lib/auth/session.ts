@@ -1,47 +1,18 @@
+import "server-only";
 import { cookies } from "next/headers";
 import { decodeJwt } from "jose";
 import { cache } from "react";
-import type { Role, User } from "@/lib/api/types";
+import type { User } from "@/lib/api/types";
 import { serverFetch } from "@/lib/api/http.server";
+import {
+  type SessionUser,
+  type JwtPayload,
+  ROLE_HOME_MAP,
+  roleHome,
+  safeNext,
+} from "@/lib/auth/utils";
 
-export interface SessionUser {
-  id: string;
-  email: string;
-  role: Role;
-  name?: string;
-  avatar?: string;
-}
-
-export interface JwtPayload {
-  id: string;
-  email: string;
-  role: Role;
-  exp?: number;
-  iat?: number;
-}
-
-export const ROLE_HOME_MAP: Record<Role, string> = {
-  ADMIN: "/admin",
-  OWNER: "/owner",
-  TENANT: "/dashboard",
-};
-
-export function roleHome(role?: Role | null): string {
-  if (!role) return "/login";
-  return ROLE_HOME_MAP[role] || "/dashboard";
-}
-
-/**
- * Ensures next redirect path is safe and same-origin relative (prevents open redirects)
- */
-export function safeNext(path?: string | null): string {
-  if (!path) return "";
-  const trimmed = path.trim();
-  if (trimmed.startsWith("/") && !trimmed.startsWith("//") && !trimmed.includes("\\")) {
-    return trimmed;
-  }
-  return "";
-}
+export { type SessionUser, type JwtPayload, ROLE_HOME_MAP, roleHome, safeNext };
 
 /**
  * Reads accessToken cookie and decodes JWT payload (zero network overhead).

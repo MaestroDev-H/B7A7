@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { decodeJwt } from "jose";
 import type { Role } from "@/lib/api/types";
-import { ROLE_HOME_MAP } from "@/lib/auth/session";
+import { ROLE_HOME_MAP } from "@/lib/auth/utils";
 
 interface JwtPayload {
   id: string;
