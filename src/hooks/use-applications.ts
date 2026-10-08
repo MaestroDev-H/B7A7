@@ -38,7 +38,7 @@ export function useCreateApplication() {
 }
 
 export function useOptimisticWithdrawApplication(id: string) {
-  return useOptimisticMutation<Application, void, { previousData: unknown }>({
+  return useOptimisticMutation<Application, void, Application[]>({
     mutationFn: () => applicationsService.withdraw(clientFetch, id),
     queryKey: queryKeys.applications.mine,
     updateFn: (old: Application[] | undefined) => {

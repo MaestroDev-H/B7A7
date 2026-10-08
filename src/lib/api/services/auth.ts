@@ -1,4 +1,4 @@
-import type { User } from "@/lib/api/types";
+import type { User, HttpCaller } from "@/lib/api/types";
 
 export interface LoginDto {
   email: string;
@@ -20,20 +20,18 @@ export interface AuthResponse {
 }
 
 export const authService = {
-  login: (http: typeof fetch | ((url: string, opts?: any) => Promise<any>), dto: LoginDto) =>
-    http("/auth/login", { method: "POST", body: JSON.stringify(dto) }),
+  login: (http: HttpCaller, dto: LoginDto) =>
+    http<AuthResponse>("/auth/login", { method: "POST", body: JSON.stringify(dto) }),
 
-  register: (http: typeof fetch | ((url: string, opts?: any) => Promise<any>), dto: RegisterDto) =>
-    http("/auth/register", { method: "POST", body: JSON.stringify(dto) }),
+  register: (http: HttpCaller, dto: RegisterDto) =>
+    http<{ user: User }>("/auth/register", { method: "POST", body: JSON.stringify(dto) }),
 
-  verifyEmail: (
-    http: typeof fetch | ((url: string, opts?: any) => Promise<any>),
-    dto: { email: string; otp: string }
-  ) => http("/auth/verify-email", { method: "POST", body: JSON.stringify(dto) }),
+  verifyEmail: (http: HttpCaller, dto: { email: string; otp: string }) =>
+    http<AuthResponse>("/auth/verify-email", { method: "POST", body: JSON.stringify(dto) }),
 
-  resendOtp: (http: typeof fetch | ((url: string, opts?: any) => Promise<any>), email: string) =>
-    http("/auth/resend-otp", { method: "POST", body: JSON.stringify({ email }) }),
+  resendOtp: (http: HttpCaller, email: string) =>
+    http<{ success: boolean }>("/auth/resend-otp", { method: "POST", body: JSON.stringify({ email }) }),
 
-  logout: (http: typeof fetch | ((url: string, opts?: any) => Promise<any>)) =>
-    http("/auth/logout", { method: "POST" }),
+  logout: (http: HttpCaller) =>
+    http<{ success: boolean }>("/auth/logout", { method: "POST" }),
 };

@@ -1,4 +1,4 @@
-import type { Payment, Invoice } from "@/lib/api/types";
+import type { Payment, Invoice, HttpCaller } from "@/lib/api/types";
 
 export interface InitiatePaymentResponse {
   checkoutUrl: string;
@@ -6,24 +6,15 @@ export interface InitiatePaymentResponse {
 }
 
 export const paymentsService = {
-  initiate: <T = InitiatePaymentResponse>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    invoiceId: string
-  ): Promise<T> =>
-    http("/payments/initiate", {
+  initiate: (http: HttpCaller, invoiceId: string): Promise<InitiatePaymentResponse> =>
+    http<InitiatePaymentResponse>("/payments/initiate", {
       method: "POST",
       body: JSON.stringify({ invoiceId }),
     }),
 
-  getHistory: <T = Payment[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    params?: { status?: string }
-  ): Promise<T> =>
-    http("/payments/history", { params }),
+  getHistory: (http: HttpCaller, params?: { status?: string }): Promise<Payment[]> =>
+    http<Payment[]>("/payments/history", { params }),
 
-  getInvoiceById: <T = Invoice>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    invoiceId: string
-  ): Promise<T> =>
-    http(`/payments/invoices/${invoiceId}`),
+  getInvoiceById: (http: HttpCaller, invoiceId: string): Promise<Invoice> =>
+    http<Invoice>(`/payments/invoices/${invoiceId}`),
 };

@@ -37,7 +37,7 @@ export function useCreateViewing() {
 }
 
 export function useOptimisticViewingStatus(id: string) {
-  return useOptimisticMutation<ViewingRequest, { status: ViewingStatus }, { previousData: unknown }>({
+  return useOptimisticMutation<ViewingRequest, { status: ViewingStatus }, ViewingRequest[]>({
     mutationFn: ({ status }) => viewingsService.updateStatus(clientFetch, id, status),
     queryKey: queryKeys.viewings.incoming(),
     updateFn: (old: ViewingRequest[] | undefined, { status }) => {

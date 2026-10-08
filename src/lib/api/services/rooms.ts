@@ -1,4 +1,4 @@
-import type { Room, RoomStatus } from "@/lib/api/types";
+import type { Room, RoomStatus, HttpCaller, Paginated } from "@/lib/api/types";
 
 export interface CreateRoomDto {
   roomNumber: string;
@@ -13,35 +13,21 @@ export interface UpdateRoomDto extends Partial<CreateRoomDto> {
 }
 
 export const roomsService = {
-  getAll: <T = { data: Room[]; meta: { total: number; page: number; totalPages: number } }>(
-    http: (url: string, opts?: unknown) => Promise<T>,
+  getAll: (
+    http: HttpCaller,
     params?: { page?: number; limit?: number; city?: string; minRent?: number; maxRent?: number; search?: string }
-  ): Promise<T> =>
-    http("/rooms", { params }),
+  ): Promise<Paginated<Room>> =>
+    http<Paginated<Room>>("/rooms", { params }),
 
-  getById: <T = Room>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/rooms/${id}`),
+  getById: (http: HttpCaller, id: string): Promise<Room> =>
+    http<Room>(`/rooms/${id}`),
 
-  createForProperty: <T = Room>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    propertyId: string,
-    dto: CreateRoomDto
-  ): Promise<T> =>
-    http(`/rooms/property/${propertyId}`, { method: "POST", body: JSON.stringify(dto) }),
+  createForProperty: (http: HttpCaller, propertyId: string, dto: CreateRoomDto): Promise<Room> =>
+    http<Room>(`/rooms/property/${propertyId}`, { method: "POST", body: JSON.stringify(dto) }),
 
-  update: <T = Room>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string,
-    dto: UpdateRoomDto
-  ): Promise<T> =>
-    http(`/rooms/${id}`, { method: "PATCH", body: JSON.stringify(dto) }),
+  update: (http: HttpCaller, id: string, dto: UpdateRoomDto): Promise<Room> =>
+    http<Room>(`/rooms/${id}`, { method: "PATCH", body: JSON.stringify(dto) }),
 
-  delete: <T = { success: boolean; message: string }>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/rooms/${id}`, { method: "DELETE" }),
+  delete: (http: HttpCaller, id: string): Promise<{ success: boolean; message: string }> =>
+    http<{ success: boolean; message: string }>(`/rooms/${id}`, { method: "DELETE" }),
 };

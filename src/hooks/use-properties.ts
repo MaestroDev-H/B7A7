@@ -60,7 +60,7 @@ export function useUpdateProperty(id: string) {
 }
 
 export function useOptimisticTogglePublish(id: string) {
-  return useOptimisticMutation<{ success: boolean; data: Property }, { isPublished: boolean }, { previousData: unknown }>({
+  return useOptimisticMutation<Property, { isPublished: boolean }, Property[]>({
     mutationFn: ({ isPublished }) =>
       propertiesService.update(clientFetch, id, { isPublished }),
     queryKey: queryKeys.properties.my(),

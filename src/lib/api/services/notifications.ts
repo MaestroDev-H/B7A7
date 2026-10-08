@@ -1,20 +1,12 @@
-import type { Notification } from "@/lib/api/types";
+import type { Notification, HttpCaller } from "@/lib/api/types";
 
 export const notificationsService = {
-  getAll: <T = Notification[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    params?: { unread?: boolean }
-  ): Promise<T> =>
-    http("/notifications", { params }),
+  getAll: (http: HttpCaller, params?: { unread?: boolean }): Promise<Notification[]> =>
+    http<Notification[]>("/notifications", { params }),
 
-  markAsRead: <T = Notification>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/notifications/${id}/read`, { method: "PATCH" }),
+  markAsRead: (http: HttpCaller, id: string): Promise<Notification> =>
+    http<Notification>(`/notifications/${id}/read`, { method: "PATCH" }),
 
-  markAllAsRead: <T = { count: number }>(
-    http: (url: string, opts?: unknown) => Promise<T>
-  ): Promise<T> =>
-    http("/notifications/read-all", { method: "PATCH" }),
+  markAllAsRead: (http: HttpCaller): Promise<{ count: number }> =>
+    http<{ count: number }>("/notifications/read-all", { method: "PATCH" }),
 };

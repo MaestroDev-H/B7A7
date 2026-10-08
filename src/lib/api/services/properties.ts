@@ -1,4 +1,4 @@
-import type { Property, PropertyType } from "@/lib/api/types";
+import type { Property, PropertyType, HttpCaller, Paginated } from "@/lib/api/types";
 
 export interface PropertyFilterParams {
   page?: number;
@@ -10,6 +10,7 @@ export interface PropertyFilterParams {
   search?: string;
   sortBy?: "createdAt" | "title";
   order?: "asc" | "desc";
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface CreatePropertyDto {
@@ -28,40 +29,24 @@ export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {
 }
 
 export const propertiesService = {
-  getAll: <T = { data: Property[]; meta: { total: number; page: number; totalPages: number } }>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    params?: PropertyFilterParams
-  ): Promise<T> =>
-    http("/properties", { params }),
+  getAll: (http: HttpCaller, params?: PropertyFilterParams): Promise<Paginated<Property>> =>
+    http<Paginated<Property>>("/properties", { params }),
 
-  getById: <T = Property>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/properties/${id}`),
+  getById: (http: HttpCaller, id: string): Promise<Property> =>
+    http<Property>(`/properties/${id}`),
 
-  getMyProperties: <T = Property[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
+  getMyProperties: (
+    http: HttpCaller,
     params?: { search?: string; type?: string }
-  ): Promise<T> =>
-    http("/properties/my-properties", { params }),
+  ): Promise<Property[]> =>
+    http<Property[]>("/properties/my-properties", { params }),
 
-  create: <T = Property>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    dto: CreatePropertyDto
-  ): Promise<T> =>
-    http("/properties", { method: "POST", body: JSON.stringify(dto) }),
+  create: (http: HttpCaller, dto: CreatePropertyDto): Promise<Property> =>
+    http<Property>("/properties", { method: "POST", body: JSON.stringify(dto) }),
 
-  update: <T = Property>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string,
-    dto: UpdatePropertyDto
-  ): Promise<T> =>
-    http(`/properties/${id}`, { method: "PATCH", body: JSON.stringify(dto) }),
+  update: (http: HttpCaller, id: string, dto: UpdatePropertyDto): Promise<Property> =>
+    http<Property>(`/properties/${id}`, { method: "PATCH", body: JSON.stringify(dto) }),
 
-  delete: <T = { success: boolean; message: string }>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/properties/${id}`, { method: "DELETE" }),
+  delete: (http: HttpCaller, id: string): Promise<{ success: boolean; message: string }> =>
+    http<{ success: boolean; message: string }>(`/properties/${id}`, { method: "DELETE" }),
 };

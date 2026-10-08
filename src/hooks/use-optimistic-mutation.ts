@@ -9,20 +9,25 @@ import {
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api/errors";
 
-export interface OptimisticMutationOptions<TData, TVariables, TContext> {
-  mutationFn: MutationFunction<TData, TVariables>;
+export interface OptimisticMutationOptions<TMutationData, TVariables, TQueryData, TContext> {
+  mutationFn: MutationFunction<TMutationData, TVariables>;
   queryKey: QueryKey;
-  updateFn: (oldData: any, variables: TVariables) => any;
+  updateFn: (oldData: TQueryData | undefined, variables: TVariables) => TQueryData | undefined;
   successMessage?: string;
   errorMessage?: string;
   invalidateKeys?: QueryKey[];
-  onSuccess?: (data: TData, variables: TVariables, context: TContext | undefined) => void;
+  onSuccess?: (data: TMutationData, variables: TVariables, context: TContext | undefined) => void;
 }
 
 /**
  * Reusable helper for optimistic mutations with rollback on failure and automatic query invalidation.
  */
-export function useOptimisticMutation<TData = unknown, TVariables = void, TContext = { previousData: unknown }>({
+export function useOptimisticMutation<
+  TMutationData = unknown,
+  TVariables = void,
+  TQueryData = unknown,
+  TContext = { previousData: TQueryData | undefined }
+>({
   mutationFn,
   queryKey,
   updateFn,
@@ -30,7 +35,7 @@ export function useOptimisticMutation<TData = unknown, TVariables = void, TConte
   errorMessage,
   invalidateKeys = [],
   onSuccess,
-}: OptimisticMutationOptions<TData, TVariables, TContext>) {
+}: OptimisticMutationOptions<TMutationData, TVariables, TQueryData, TContext>) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -40,17 +45,22 @@ export function useOptimisticMutation<TData = unknown, TVariables = void, TConte
       await queryClient.cancelQueries({ queryKey });
 
       // Snapshot the previous value
-      const previousData = queryClient.getQueryData(queryKey);
+      const previousData = queryClient.getQueryData<TQueryData>(queryKey);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(queryKey, (old: unknown) => updateFn(old, variables));
+      queryClient.setQueryData<TQueryData>(queryKey, (old: TQueryData | undefined) =>
+        updateFn(old, variables)
+      );
 
       return { previousData } as unknown as TContext;
     },
     onError: (err, _variables, context) => {
       // Rollback to previous value
       if (context && typeof context === "object" && "previousData" in context) {
-        queryClient.setQueryData(queryKey, (context as { previousData: unknown }).previousData);
+        queryClient.setQueryData(
+          queryKey,
+          (context as { previousData: TQueryData | undefined }).previousData
+        );
       }
 
       const msg = err instanceof ApiError ? err.message : errorMessage || "Action failed";

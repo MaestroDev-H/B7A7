@@ -52,7 +52,7 @@ export function useOptimisticMaintenanceStatus(id: string) {
   return useOptimisticMutation<
     MaintenanceRequest,
     { status: MaintenanceStatus },
-    { previousData: unknown }
+    MaintenanceRequest[]
   >({
     mutationFn: ({ status }) =>
       maintenanceService.updateStatus(clientFetch, id, status),

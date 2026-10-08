@@ -1,16 +1,9 @@
 import { ApiError, type FieldError } from "@/lib/api/errors";
-import type { ApiResponse } from "@/lib/api/types";
+import type { ApiResponse, RequestConfig, HttpCaller } from "@/lib/api/types";
 
-export interface ClientRequestOptions extends RequestInit {
-  params?: Record<string, string | number | boolean | undefined>;
-  onProgress?: (percentage: number) => void;
-  silent?: boolean;
-}
+export interface ClientRequestOptions extends RequestConfig, Omit<RequestInit, "body" | "headers"> {}
 
-/**
- * Client-side HTTP caller making authenticated proxy requests to Next.js BFF proxy (/api/proxy/*)
- */
-export async function clientFetch<T>(
+export const clientFetch: HttpCaller = async function clientFetch<T>(
   endpoint: string,
   options: ClientRequestOptions = {}
 ): Promise<T> {
@@ -52,6 +45,7 @@ export async function clientFetch<T>(
             resolve(responseData.data ?? responseData);
           } else {
             if (responseData?.code === "SESSION_EXPIRED" && typeof window !== "undefined") {
+              // eslint-disable-next-line @next/next/no-location-assign-relative-destination
               window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
             }
             reject(
@@ -88,6 +82,7 @@ export async function clientFetch<T>(
 
   if (!res.ok) {
     if (data?.code === "SESSION_EXPIRED" && typeof window !== "undefined") {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
     }
 

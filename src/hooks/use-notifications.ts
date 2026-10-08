@@ -17,7 +17,7 @@ export function useNotifications(unreadOnly = false) {
 }
 
 export function useOptimisticMarkNotificationRead(id: string) {
-  return useOptimisticMutation<Notification, void, { previousData: unknown }>({
+  return useOptimisticMutation<Notification, void, Notification[]>({
     mutationFn: () => notificationsService.markAsRead(clientFetch, id),
     queryKey: queryKeys.notifications.all(false),
     updateFn: (old: Notification[] | undefined) => {

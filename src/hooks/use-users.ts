@@ -9,7 +9,7 @@ import {
 } from "@/lib/api/services/users";
 import { queryKeys } from "@/lib/queries/keys";
 import { useOptimisticMutation } from "@/hooks/use-optimistic-mutation";
-import type { User, Role } from "@/lib/api/types";
+import type { User, Role, Paginated } from "@/lib/api/types";
 import { toast } from "sonner";
 
 export function useCurrentUser() {
@@ -48,13 +48,10 @@ export function useAllUsers(params?: { page?: number; limit?: number; role?: str
 }
 
 export function useOptimisticUpdateUserRole(userId: string) {
-  return useOptimisticMutation<User, { role: Role }, { previousData: unknown }>({
+  return useOptimisticMutation<User, { role: Role }, Paginated<User>>({
     mutationFn: ({ role }) => usersService.updateUserRole(clientFetch, userId, role),
     queryKey: queryKeys.users.all(),
-    updateFn: (
-      old: { data: User[]; meta: { total: number; page: number; totalPages: number } } | undefined,
-      { role }
-    ) => {
+    updateFn: (old: Paginated<User> | undefined, { role }) => {
       if (!old || !Array.isArray(old.data)) return old;
       return {
         ...old,

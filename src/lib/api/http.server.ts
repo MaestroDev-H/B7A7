@@ -1,18 +1,17 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { ApiError, type FieldError } from "@/lib/api/errors";
-import type { ApiResponse } from "@/lib/api/types";
+import type { ApiResponse, RequestConfig, HttpCaller } from "@/lib/api/types";
 
 const API_BASE_URL = (
   process.env.API_BASE_URL || "http://localhost:5000/api/v1"
 ).replace(/\/$/, "");
 
-export interface ServerRequestOptions extends RequestInit {
-  params?: Record<string, string | number | boolean | undefined>;
+export interface ServerRequestOptions extends RequestConfig, Omit<RequestInit, "body" | "headers"> {
   token?: string;
 }
 
-export async function serverFetch<T>(
+export const serverFetch: HttpCaller = async function serverFetch<T>(
   endpoint: string,
   options: ServerRequestOptions = {}
 ): Promise<T> {

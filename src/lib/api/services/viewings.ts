@@ -1,4 +1,4 @@
-import type { ViewingRequest, ViewingStatus } from "@/lib/api/types";
+import type { ViewingRequest, ViewingStatus, HttpCaller } from "@/lib/api/types";
 
 export interface CreateViewingDto {
   roomId: string;
@@ -7,27 +7,15 @@ export interface CreateViewingDto {
 }
 
 export const viewingsService = {
-  create: <T = ViewingRequest>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    dto: CreateViewingDto
-  ): Promise<T> =>
-    http("/viewings", { method: "POST", body: JSON.stringify(dto) }),
+  create: (http: HttpCaller, dto: CreateViewingDto): Promise<ViewingRequest> =>
+    http<ViewingRequest>("/viewings", { method: "POST", body: JSON.stringify(dto) }),
 
-  getMyViewings: <T = ViewingRequest[]>(
-    http: (url: string, opts?: unknown) => Promise<T>
-  ): Promise<T> =>
-    http("/viewings/my-viewings"),
+  getMyViewings: (http: HttpCaller): Promise<ViewingRequest[]> =>
+    http<ViewingRequest[]>("/viewings/my-viewings"),
 
-  getIncoming: <T = ViewingRequest[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    params?: { status?: ViewingStatus }
-  ): Promise<T> =>
-    http("/viewings/incoming", { params }),
+  getIncoming: (http: HttpCaller, params?: { status?: ViewingStatus }): Promise<ViewingRequest[]> =>
+    http<ViewingRequest[]>("/viewings/incoming", { params }),
 
-  updateStatus: <T = ViewingRequest>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string,
-    status: ViewingStatus
-  ): Promise<T> =>
-    http(`/viewings/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+  updateStatus: (http: HttpCaller, id: string, status: ViewingStatus): Promise<ViewingRequest> =>
+    http<ViewingRequest>(`/viewings/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
 };

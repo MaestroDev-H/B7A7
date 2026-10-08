@@ -2,6 +2,7 @@ import type {
   MaintenanceRequest,
   MaintenanceStatus,
   MaintenancePriority,
+  HttpCaller,
 } from "@/lib/api/types";
 
 export interface CreateMaintenanceDto {
@@ -13,30 +14,23 @@ export interface CreateMaintenanceDto {
 }
 
 export const maintenanceService = {
-  create: <T = MaintenanceRequest>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    dto: CreateMaintenanceDto
-  ): Promise<T> =>
-    http("/maintenance", { method: "POST", body: JSON.stringify(dto) }),
+  create: (http: HttpCaller, dto: CreateMaintenanceDto): Promise<MaintenanceRequest> =>
+    http<MaintenanceRequest>("/maintenance", { method: "POST", body: JSON.stringify(dto) }),
 
-  getMyRequests: <T = MaintenanceRequest[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
+  getMyRequests: (
+    http: HttpCaller,
     params?: { status?: MaintenanceStatus; priority?: MaintenancePriority }
-  ): Promise<T> =>
-    http("/maintenance/my-requests", { params }),
+  ): Promise<MaintenanceRequest[]> =>
+    http<MaintenanceRequest[]>("/maintenance/my-requests", { params }),
 
-  getIncoming: <T = MaintenanceRequest[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
+  getIncoming: (
+    http: HttpCaller,
     params?: { status?: MaintenanceStatus; priority?: MaintenancePriority; propertyId?: string }
-  ): Promise<T> =>
-    http("/maintenance/incoming", { params }),
+  ): Promise<MaintenanceRequest[]> =>
+    http<MaintenanceRequest[]>("/maintenance/incoming", { params }),
 
-  updateStatus: <T = MaintenanceRequest>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string,
-    status: MaintenanceStatus
-  ): Promise<T> =>
-    http(`/maintenance/${id}/status`, {
+  updateStatus: (http: HttpCaller, id: string, status: MaintenanceStatus): Promise<MaintenanceRequest> =>
+    http<MaintenanceRequest>(`/maintenance/${id}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
     }),

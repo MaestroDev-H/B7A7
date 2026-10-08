@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { fontSans, fontDisplay } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -32,10 +33,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider delay={200}>
-            {children}
-            <Toaster richColors closeButton position="top-right" />
-          </TooltipProvider>
+          <QueryProvider>
+            <TooltipProvider delay={200}>
+              {children}
+              <Toaster richColors closeButton position="top-right" />
+            </TooltipProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

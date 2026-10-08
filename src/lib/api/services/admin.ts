@@ -1,14 +1,12 @@
-import type { AdminStats, AuditLog } from "@/lib/api/types";
+import type { AdminStats, AuditLog, HttpCaller, Paginated } from "@/lib/api/types";
 
 export const adminService = {
-  getStats: <T = AdminStats>(
-    http: (url: string, opts?: unknown) => Promise<T>
-  ): Promise<T> =>
-    http("/admin/dashboard-stats"),
+  getStats: (http: HttpCaller): Promise<AdminStats> =>
+    http<AdminStats>("/admin/dashboard-stats"),
 
-  getAuditLogs: <T = { data: AuditLog[]; meta: { total: number; page: number; totalPages: number } }>(
-    http: (url: string, opts?: unknown) => Promise<T>,
+  getAuditLogs: (
+    http: HttpCaller,
     params?: { page?: number; limit?: number; entityType?: string; userId?: string }
-  ): Promise<T> =>
-    http("/admin/audit-logs", { params }),
+  ): Promise<Paginated<AuditLog>> =>
+    http<Paginated<AuditLog>>("/admin/audit-logs", { params }),
 };

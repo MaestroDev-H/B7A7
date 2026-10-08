@@ -1,4 +1,4 @@
-import type { Tenancy, Invoice, InvoiceType } from "@/lib/api/types";
+import type { Tenancy, Invoice, InvoiceType, HttpCaller } from "@/lib/api/types";
 
 export interface GenerateInvoiceDto {
   type: InvoiceType;
@@ -8,44 +8,26 @@ export interface GenerateInvoiceDto {
 }
 
 export const tenanciesService = {
-  getMyTenancies: <T = Tenancy[]>(
-    http: (url: string, opts?: unknown) => Promise<T>
-  ): Promise<T> =>
-    http("/tenancies/my-tenancies"),
+  getMyTenancies: (http: HttpCaller): Promise<Tenancy[]> =>
+    http<Tenancy[]>("/tenancies/my-tenancies"),
 
-  getMyInvoices: <T = Invoice[]>(
-    http: (url: string, opts?: unknown) => Promise<T>
-  ): Promise<T> =>
-    http("/tenancies/my-invoices"),
+  getMyInvoices: (http: HttpCaller): Promise<Invoice[]> =>
+    http<Invoice[]>("/tenancies/my-invoices"),
 
-  getAll: <T = Tenancy[]>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    params?: { status?: string }
-  ): Promise<T> =>
-    http("/tenancies", { params }),
+  getAll: (http: HttpCaller, params?: { status?: string }): Promise<Tenancy[]> =>
+    http<Tenancy[]>("/tenancies", { params }),
 
-  getById: <T = Tenancy>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string
-  ): Promise<T> =>
-    http(`/tenancies/${id}`),
+  getById: (http: HttpCaller, id: string): Promise<Tenancy> =>
+    http<Tenancy>(`/tenancies/${id}`),
 
-  endTenancy: <T = Tenancy>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    id: string,
-    endDate?: string
-  ): Promise<T> =>
-    http(`/tenancies/${id}/end`, {
+  endTenancy: (http: HttpCaller, id: string, endDate?: string): Promise<Tenancy> =>
+    http<Tenancy>(`/tenancies/${id}/end`, {
       method: "PATCH",
       body: JSON.stringify(endDate ? { endDate } : {}),
     }),
 
-  generateInvoice: <T = Invoice>(
-    http: (url: string, opts?: unknown) => Promise<T>,
-    tenancyId: string,
-    dto: GenerateInvoiceDto
-  ): Promise<T> =>
-    http(`/tenancies/${tenancyId}/invoices`, {
+  generateInvoice: (http: HttpCaller, tenancyId: string, dto: GenerateInvoiceDto): Promise<Invoice> =>
+    http<Invoice>(`/tenancies/${tenancyId}/invoices`, {
       method: "POST",
       body: JSON.stringify(dto),
     }),

@@ -271,3 +271,15 @@ export interface AdminStats {
   pendingApplications: number;
   totalRevenue: Decimal | number;
 }
+
+export interface RequestConfig {
+  method?: string;
+  body?: BodyInit | null;
+  params?: Record<string, string | number | boolean | undefined>;
+  headers?: HeadersInit;
+  onProgress?: (percentage: number) => void;
+  silent?: boolean;
+}
+
+export type HttpCaller = <T>(endpoint: string, options?: RequestConfig) => Promise<T>;
+
