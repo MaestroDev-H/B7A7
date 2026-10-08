@@ -52,10 +52,10 @@ export function useUpdateRoom(id: string, propertyId?: string) {
   });
 }
 
-export function useDeleteRoom(id: string, propertyId?: string) {
+export function useDeleteRoom(propertyId?: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => roomsService.delete(clientFetch, id),
+    mutationFn: (roomId: string) => roomsService.delete(clientFetch, roomId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       if (propertyId) {
