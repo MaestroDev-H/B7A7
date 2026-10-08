@@ -1,16 +1,46 @@
-import { getCurrentUser } from "@/lib/auth/session";
-import { requireRole } from "@/lib/auth/guard";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { tenanciesService } from "@/lib/api/services/tenancies";
+import { viewingsService } from "@/lib/api/services/viewings";
+import { applicationsService } from "@/lib/api/services/applications";
+import { usersService } from "@/lib/api/services/users";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { TenantOverview } from "@/components/features/dashboard/TenantOverview";
 
-export default async function DashboardPage() {
-  await requireRole("TENANT");
-  const user = await getCurrentUser();
+export const metadata: Metadata = {
+  title: "Tenant Dashboard",
+  description: "Overview of your tenancies, room viewings, applications, and payments.",
+};
+
+export default async function TenantDashboardPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.auth.me,
+      queryFn: () => usersService.getMe(serverFetch),
+    },
+    {
+      queryKey: queryKeys.tenancies.mine,
+      queryFn: () => tenanciesService.getMyTenancies(serverFetch),
+    },
+    {
+      queryKey: queryKeys.viewings.mine,
+      queryFn: () => viewingsService.getMyViewings(serverFetch),
+    },
+    {
+      queryKey: queryKeys.applications.mine,
+      queryFn: () => applicationsService.getMyApplications(serverFetch),
+    },
+    {
+      queryKey: queryKeys.tenancies.myInvoices,
+      queryFn: () => tenanciesService.getMyInvoices(serverFetch),
+    },
+  ]);
 
   return (
-    <div className="p-8 space-y-4">
-      <h1 className="text-2xl font-bold font-display">Tenant Dashboard</h1>
-      <p className="text-muted-foreground">
-        Signed in as: <strong className="text-foreground">{user?.name}</strong> ({user?.email}) - Role: <span className="font-mono text-xs bg-muted px-2 py-1 rounded">{user?.role}</span>
-      </p>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <TenantOverview />
+    </HydrationBoundary>
   );
 }
