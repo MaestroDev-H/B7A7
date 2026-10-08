@@ -1,15 +1,33 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { roommatesService } from "@/lib/api/services/roommates";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { RoommatesView } from "@/components/features/roommates/RoommatesView";
 
-export default function TenantRoommatesPage() {
+export const metadata: Metadata = {
+  title: "Roommate Matching",
+  description: "Find compatible flatmates and discover rooms matching your lifestyle preferences.",
+};
+
+export default async function RoommatesPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.roommates.preference,
+      queryFn: async () => {
+        try {
+          return await roommatesService.getMyPreference(serverFetch);
+        } catch {
+          return null;
+        }
+      },
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Roommate Matching"
-        description="Configure your living preferences and discover compatible housemates."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Roommate preferences and matching tabs coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <RoommatesView />
+    </HydrationBoundary>
   );
 }
