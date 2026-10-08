@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+
+    env:
+      API_BASE_URL: https://b7a6-backend.vercel.app/api/v1
+      NEXT_PUBLIC_APP_URL: https://nestly.local
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.10.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript Verification
+        run: pnpm typecheck
+
+      - name: Route Coverage Check
+        run: node scripts/check-routes.mjs
+
+      - name: Next.js Production Build
+        run: pnpm build
