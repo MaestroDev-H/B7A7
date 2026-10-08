@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { applicationsService } from "@/lib/api/services/applications";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { OwnerApplicationsView } from "@/components/features/owner/OwnerApplicationsView";
 
-export default function AdminApplicationsPage() {
+export const metadata: Metadata = {
+  title: "Platform Applications Oversight",
+  description: "Administrative oversight on rental applications across all residential listings.",
+};
+
+export default async function AdminApplicationsPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.applications.incoming(),
+      queryFn: () => applicationsService.getIncoming(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Applications Oversight"
-        description="Cross-platform oversight on all rental applications, tenant submissions, and approvals."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Admin applications review table coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <OwnerApplicationsView />
+    </HydrationBoundary>
   );
 }
