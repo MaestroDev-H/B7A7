@@ -28,6 +28,7 @@ export interface ConfirmDialogProps {
   variant?: "default" | "destructive";
   onConfirm: () => Promise<void> | void;
   isLoading?: boolean;
+  disabled?: boolean;
   children?: React.ReactNode;
 }
 
@@ -44,6 +45,7 @@ export function ConfirmDialog({
   variant = "default",
   onConfirm,
   isLoading = false,
+  disabled = false,
   children,
 }: ConfirmDialogProps) {
   const finalConfirmLabel = confirmText || confirmLabel || "Confirm";
@@ -83,7 +85,7 @@ export function ConfirmDialog({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
-            disabled={loading}
+            disabled={loading || disabled}
             className={cn(
               variant === "destructive" &&
                 "bg-destructive text-destructive-foreground hover:bg-destructive/90"
