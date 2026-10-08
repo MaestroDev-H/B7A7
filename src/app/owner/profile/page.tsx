@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { usersService } from "@/lib/api/services/users";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { ProfileSettings } from "@/components/features/profile/ProfileSettings";
 
-export default function OwnerProfilePage() {
+export const metadata: Metadata = {
+  title: "Owner Profile & Settings",
+  description: "Manage your property host profile, contact phone, and credentials.",
+};
+
+export default async function OwnerProfilePage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.auth.me,
+      queryFn: () => usersService.getMe(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Owner Profile &amp; Security"
-        description="Update your contact information, host avatar, and account credentials."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Owner profile and password settings coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <ProfileSettings />
+    </HydrationBoundary>
   );
 }
