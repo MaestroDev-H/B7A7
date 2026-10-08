@@ -28,6 +28,7 @@ export interface ConfirmDialogProps {
   variant?: "default" | "destructive";
   onConfirm: () => Promise<void> | void;
   isLoading?: boolean;
+  children?: React.ReactNode;
 }
 
 export function ConfirmDialog({
@@ -43,6 +44,7 @@ export function ConfirmDialog({
   variant = "default",
   onConfirm,
   isLoading = false,
+  children,
 }: ConfirmDialogProps) {
   const finalConfirmLabel = confirmText || confirmLabel || "Confirm";
   const finalCancelLabel = cancelText || cancelLabel || "Cancel";
@@ -73,6 +75,7 @@ export function ConfirmDialog({
           <AlertDialogDescription className="text-sm text-muted-foreground">
             {description}
           </AlertDialogDescription>
+          {children}
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">
           <AlertDialogCancel disabled={loading}>

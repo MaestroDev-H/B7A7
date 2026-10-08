@@ -1,15 +1,31 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { tenanciesService } from "@/lib/api/services/tenancies";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { TenantTenanciesView } from "@/components/features/tenancies/TenantTenanciesView";
 
-export default function TenantTenanciesPage() {
+export const metadata: Metadata = {
+  title: "My Tenancies",
+  description: "View your active and past room lease agreements.",
+};
+
+export default async function TenantTenanciesPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.tenancies.mine,
+      queryFn: () => tenanciesService.getMyTenancies(serverFetch),
+    },
+    {
+      queryKey: queryKeys.tenancies.myInvoices,
+      queryFn: () => tenanciesService.getMyInvoices(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="My Tenancies"
-        description="View your active and past lease agreements, unit keys, and rent schedules."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Tenancies list and lease agreements coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <TenantTenanciesView />
+    </HydrationBoundary>
   );
 }
