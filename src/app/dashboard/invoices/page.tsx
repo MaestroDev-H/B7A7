@@ -1,15 +1,27 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
+import { tenanciesService } from "@/lib/api/services/tenancies";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { TenantInvoicesView } from "@/components/features/invoices/TenantInvoicesView";
 
-export default function TenantInvoicesPage() {
+export const metadata: Metadata = {
+  title: "Invoices & Payments",
+  description: "View outstanding rental invoices and initiate secure payments.",
+};
+
+export default async function TenantInvoicesPage() {
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.tenancies.myInvoices,
+      queryFn: () => tenanciesService.getMyInvoices(serverFetch),
+    },
+  ]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Invoices &amp; Billing"
-        description="View outstanding rent &amp; utility invoices and initiate instant Stripe test payments."
-      />
-      <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-        Tenant invoices table and Stripe checkout buttons coming together in the next step.
-      </div>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <TenantInvoicesView />
+    </HydrationBoundary>
   );
 }
