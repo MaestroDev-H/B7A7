@@ -22,6 +22,7 @@ export interface CreatePropertyDto {
   area?: string;
   amenities: string[];
   images: string[];
+  isPublished?: boolean;
 }
 
 export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {
