@@ -1,16 +1,45 @@
-import { getCurrentUser } from "@/lib/auth/session";
+import type { Metadata } from "next";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { serverFetch } from "@/lib/api/http.server";
 import { requireRole } from "@/lib/auth/guard";
+import { propertiesService } from "@/lib/api/services/properties";
+import { applicationsService } from "@/lib/api/services/applications";
+import { viewingsService } from "@/lib/api/services/viewings";
+import { maintenanceService } from "@/lib/api/services/maintenance";
+import { queryKeys } from "@/lib/queries/keys";
+import { prefetchAndDehydrate } from "@/lib/queries/prefetch";
+import { OwnerOverview } from "@/components/features/owner/OwnerOverview";
+
+export const metadata: Metadata = {
+  title: "Owner Portal Overview",
+  description: "Monitor residential units, rental requests, lease status, and repair requests.",
+};
 
 export default async function OwnerPage() {
   await requireRole("OWNER");
-  const user = await getCurrentUser();
+
+  const dehydratedState = await prefetchAndDehydrate([
+    {
+      queryKey: queryKeys.properties.my(),
+      queryFn: () => propertiesService.getMyProperties(serverFetch),
+    },
+    {
+      queryKey: queryKeys.applications.incoming(),
+      queryFn: () => applicationsService.getIncoming(serverFetch),
+    },
+    {
+      queryKey: queryKeys.viewings.incoming(),
+      queryFn: () => viewingsService.getIncoming(serverFetch),
+    },
+    {
+      queryKey: queryKeys.maintenance.incoming(),
+      queryFn: () => maintenanceService.getIncoming(serverFetch),
+    },
+  ]);
 
   return (
-    <div className="p-8 space-y-4">
-      <h1 className="text-2xl font-bold font-display">Owner Dashboard</h1>
-      <p className="text-muted-foreground">
-        Signed in as: <strong className="text-foreground">{user?.name}</strong> ({user?.email}) - Role: <span className="font-mono text-xs bg-muted px-2 py-1 rounded">{user?.role}</span>
-      </p>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <OwnerOverview />
+    </HydrationBoundary>
   );
 }
