@@ -52,6 +52,26 @@ export function useOptimisticWithdrawApplication(id: string) {
   });
 }
 
+export function useOptimisticApplicationStatus(id: string) {
+  return useOptimisticMutation<Application, { status: ApplicationStatus }, Application[]>({
+    mutationFn: ({ status }) => applicationsService.updateStatus(clientFetch, id, status),
+    queryKey: queryKeys.applications.incoming(),
+    updateFn: (old: Application[] | undefined, { status }) => {
+      if (!Array.isArray(old)) return old;
+      return old.map((a) => (a.id === id ? { ...a, status } : a));
+    },
+    successMessage: "Application updated",
+    invalidateKeys: [
+      queryKeys.applications.mine,
+      queryKeys.tenancies.all(),
+      queryKeys.tenancies.mine,
+      queryKeys.tenancies.myInvoices,
+      ["properties"],
+      ["rooms"],
+    ],
+  });
+}
+
 export function useUpdateApplicationStatus(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -62,6 +82,7 @@ export function useUpdateApplicationStatus(id: string) {
       queryClient.invalidateQueries({ queryKey: queryKeys.applications.mine });
       queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.mine });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.myInvoices });
       queryClient.invalidateQueries({ queryKey: ["properties"] });
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       toast.success("Application updated");
