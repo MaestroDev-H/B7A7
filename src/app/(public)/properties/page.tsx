@@ -11,10 +11,20 @@ import { Pagination } from "@/components/shared/Pagination";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { Property, Paginated, PropertyType } from "@/lib/api/types";
 
+import { getAppUrl } from "@/lib/utils";
+
+const appUrl = getAppUrl();
+
 export const metadata: Metadata = {
   title: "Browse Properties",
   description:
     "Explore verified co-living residences, apartments, and boutique room inventories with transparent pricing.",
+  openGraph: {
+    title: "Browse Properties | Nestly",
+    description:
+      "Explore verified co-living residences, apartments, and boutique room inventories with transparent pricing.",
+    url: `${appUrl}/properties`,
+  },
 };
 
 const API_BASE_URL = (

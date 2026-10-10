@@ -10,9 +10,18 @@ import { Pagination } from "@/components/shared/Pagination";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { Room, Paginated } from "@/lib/api/types";
 
+import { getAppUrl } from "@/lib/utils";
+
+const appUrl = getAppUrl();
+
 export const metadata: Metadata = {
   title: "Available Rooms",
   description: "Browse verified private and shared rooms available for rent with transparent monthly pricing.",
+  openGraph: {
+    title: "Available Rooms | Nestly",
+    description: "Browse verified private and shared rooms available for rent with transparent monthly pricing.",
+    url: `${appUrl}/rooms`,
+  },
 };
 
 const API_BASE_URL = (

@@ -6,10 +6,20 @@ import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DoorPlate } from "@/components/shared/DoorPlate";
 
+import { getAppUrl } from "@/lib/utils";
+
+const appUrl = getAppUrl();
+
 export const metadata: Metadata = {
   title: "About Us",
   description:
     "Learn about Nestly's mission to modernize co-living through verified room inventories, compatible roommate matching, and seamless online lease management.",
+  openGraph: {
+    title: "About Us | Nestly",
+    description:
+      "Learn about Nestly's mission to modernize co-living through verified room inventories, compatible roommate matching, and seamless online lease management.",
+    url: `${appUrl}/about`,
+  },
 };
 
 export default function AboutPage() {
