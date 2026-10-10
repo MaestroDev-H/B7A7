@@ -26,7 +26,7 @@ export function HeroSearch() {
         <Input
           type="text"
           name="city"
-          placeholder="Enter city (e.g. San Francisco)"
+          placeholder="Enter city (e.g. Sylhet)"
           className="pl-10 h-12 bg-muted/40 border-border text-sm rounded-xl"
         />
       </div>

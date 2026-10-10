@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import type { Property } from "@/lib/api/types";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://b7-a7.vercel.app";
+import { getAppUrl } from "@/lib/utils";
+
+const APP_URL = getAppUrl();
 const API_BASE_URL = (
   process.env.API_BASE_URL || "http://localhost:5000/api/v1"
 ).replace(/\/$/, "");

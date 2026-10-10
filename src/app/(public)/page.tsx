@@ -22,7 +22,9 @@ import { PropertyCard } from "@/components/features/properties/PropertyCard";
 import { HeroSearch } from "@/components/features/home/HeroSearch";
 import type { Property, Paginated } from "@/lib/api/types";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://b7-a7.vercel.app";
+import { getAppUrl } from "@/lib/utils";
+
+const appUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: {
