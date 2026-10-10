@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -86,17 +87,19 @@ export function UserMenu() {
       />
 
       <DropdownMenuContent align="end" className="w-60 shadow-lg border-border">
-        <DropdownMenuLabel className="font-normal p-3 pb-2">
-          <div className="flex flex-col space-y-1">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold leading-none truncate">{user?.name || "User"}</p>
-              <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 ${roleMeta.className}`}>
-                {roleMeta.label}
-              </Badge>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal p-3 pb-2">
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold leading-none truncate">{user?.name || "User"}</p>
+                <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 ${roleMeta.className}`}>
+                  {roleMeta.label}
+                </Badge>
+              </div>
+              <p className="text-[11px] leading-none text-muted-foreground truncate">{user?.email}</p>
             </div>
-            <p className="text-[11px] leading-none text-muted-foreground truncate">{user?.email}</p>
-          </div>
-        </DropdownMenuLabel>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem render={<Link href={profileLink} className="flex items-center gap-2 w-full cursor-pointer" />}>
