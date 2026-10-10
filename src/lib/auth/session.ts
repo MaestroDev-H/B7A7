@@ -24,10 +24,10 @@ export async function getSession(): Promise<SessionUser | null> {
     if (!token) return null;
 
     const payload = decodeJwt(token) as unknown as JwtPayload;
-    if (!payload?.id || !payload?.role) return null;
+    if (!payload?.userId || !payload?.role) return null;
 
     return {
-      id: payload.id,
+      id: payload.userId,
       email: payload.email,
       role: payload.role,
     };
