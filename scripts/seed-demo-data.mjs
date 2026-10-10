@@ -4,7 +4,7 @@
  * applications, tenancies, invoices, and maintenance tickets using the live backend REST API.
  */
 
-const API_BASE_URL = process.env.API_BASE_URL || "https://b7a6-backend.vercel.app/api/v1";
+const API_BASE_URL = process.env.API_BASE_URL || "https://b7-a6-six.vercel.app/api/v1";
 
 const DEMO_ACCOUNTS = {
   admin: {
@@ -209,8 +209,8 @@ async function runSeed() {
     // Upsert Roommate Preference
     console.log("📝 Configuring Tenant Roommate Preference Profile...");
     try {
-      await apiCall("/roommates/preferences", {
-        method: "POST",
+      await apiCall("/roommates/preference", {
+        method: "PUT",
         body: {
           budgetMin: 800,
           budgetMax: 2000,
