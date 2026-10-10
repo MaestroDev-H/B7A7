@@ -77,7 +77,7 @@ const SAMPLE_PROPERTIES = [
   {
     title: "Emerald Lake Townhouse",
     description: "Contemporary lakeside townhouse featuring private dock access, integrated smart home climate control, and attached garage.",
-    type: "CONDO",
+    type: "APARTMENT",
     address: "88 Waterside Dr",
     city: "Seattle",
     area: "South Lake Union",
