@@ -4,7 +4,8 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const invoiceId = searchParams.get("invoiceId") || "";
 
-  const redirectUrl = new URL("/payment/cancel", req.url);
+  const origin = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+  const redirectUrl = new URL("/payment/cancel", origin);
   if (invoiceId) {
     redirectUrl.searchParams.set("invoiceId", invoiceId);
   }

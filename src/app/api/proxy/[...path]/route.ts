@@ -15,10 +15,12 @@ async function handleProxy(
   const queryString = req.nextUrl.search;
 
   if (targetPath === "payments/success") {
-    return NextResponse.redirect(new URL(`/payment/success${queryString}`, req.url), 302);
+    const origin = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+    return NextResponse.redirect(new URL(`/payment/success${queryString}`, origin), 302);
   }
   if (targetPath === "payments/cancel") {
-    return NextResponse.redirect(new URL(`/payment/cancel${queryString}`, req.url), 302);
+    const origin = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+    return NextResponse.redirect(new URL(`/payment/cancel${queryString}`, origin), 302);
   }
 
   const targetUrl = `${API_BASE_URL}/${targetPath}${queryString}`;
