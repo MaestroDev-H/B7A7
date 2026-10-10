@@ -22,15 +22,19 @@ import { PropertyCard } from "@/components/features/properties/PropertyCard";
 import { HeroSearch } from "@/components/features/home/HeroSearch";
 import type { Property, Paginated } from "@/lib/api/types";
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://b7-a7.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Nestly | Co-Living, Verified Rooms & Roommate Matching",
+  title: {
+    absolute: "Nestly | Co-Living, Verified Rooms & Roommate Matching",
+  },
   description:
     "Discover boutique co-living spaces, verified private rooms, and compatible housemates. Schedule tours, submit lease applications, and split rent seamlessly with Stripe.",
   openGraph: {
     title: "Nestly | Co-Living & Roommate Platform",
     description:
       "Find verified rooms with transparent pricing, compatible housemates, and automated lease billing.",
-    url: "https://nestlyliving.com",
+    url: appUrl,
     siteName: "Nestly",
     type: "website",
   },
@@ -66,7 +70,7 @@ export default async function HomePage() {
     "@type": "RealEstateAgent",
     name: "Nestly Co-Living",
     description: "Modern co-living platform with room-level leasing and roommate matching.",
-    url: "https://nestlyliving.com",
+    url: appUrl,
     currenciesAccepted: "USD",
     paymentAccepted: "Credit Card, Stripe",
   };

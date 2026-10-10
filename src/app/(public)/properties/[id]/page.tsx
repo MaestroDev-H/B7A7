@@ -52,17 +52,17 @@ export async function generateMetadata({
 
   if (!property) {
     return {
-      title: "Property Not Found | Nestly",
+      title: "Property Not Found",
     };
   }
 
   const ogImage = property.images?.[0] || undefined;
 
   return {
-    title: `${property.title} | Nestly`,
+    title: property.title,
     description: `${property.type} in ${property.city} - ${property.rooms?.length || 0} rooms with verified occupancy and online leasing.`,
     openGraph: {
-      title: `${property.title} | Nestly Living`,
+      title: property.title,
       description: property.description,
       images: ogImage ? [{ url: ogImage }] : undefined,
     },

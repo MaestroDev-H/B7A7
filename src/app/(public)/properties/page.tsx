@@ -12,7 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import type { Property, Paginated, PropertyType } from "@/lib/api/types";
 
 export const metadata: Metadata = {
-  title: "Browse Properties | Nestly",
+  title: "Browse Properties",
   description:
     "Explore verified co-living residences, apartments, and boutique room inventories with transparent pricing.",
 };

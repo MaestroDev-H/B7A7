@@ -6,14 +6,24 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://b7-a7.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://nestlyliving.com"),
+  metadataBase: new URL(appUrl),
   title: {
     default: "Nestly | Housing & Roommate Platform",
     template: "%s | Nestly",
   },
   description:
     "Discover boutique rental homes, find compatible roommates by lifestyle, book viewings, and manage tenancy agreements seamlessly.",
+  openGraph: {
+    title: "Nestly | Housing & Roommate Platform",
+    description:
+      "Discover boutique rental homes, find compatible roommates by lifestyle, book viewings, and manage tenancy agreements seamlessly.",
+    url: appUrl,
+    siteName: "Nestly",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

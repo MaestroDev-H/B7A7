@@ -11,7 +11,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import type { Room, Paginated } from "@/lib/api/types";
 
 export const metadata: Metadata = {
-  title: "Available Rooms | Nestly",
+  title: "Available Rooms",
   description: "Browse verified private and shared rooms available for rent with transparent monthly pricing.",
 };
 

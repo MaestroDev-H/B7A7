@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { DoorPlate } from "@/components/shared/DoorPlate";
 
 export const metadata: Metadata = {
-  title: "About Us | Nestly Living",
+  title: "About Us",
   description:
     "Learn about Nestly's mission to modernize co-living through verified room inventories, compatible roommate matching, and seamless online lease management.",
 };

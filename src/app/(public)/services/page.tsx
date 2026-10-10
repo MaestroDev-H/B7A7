@@ -18,7 +18,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "Platform Services & Capabilities | Nestly",
+  title: "Platform Services & Capabilities",
   description:
     "Explore the comprehensive suite of services provided by Nestly for tenants, property owners, and platform administrators.",
 };

@@ -47,11 +47,11 @@ export async function generateMetadata({
   const room = await getRoomById(id);
 
   if (!room) {
-    return { title: "Room Not Found | Nestly" };
+    return { title: "Room Not Found" };
   }
 
   return {
-    title: `Room ${room.roomNumber} | ${room.property?.title || "Nestly"}`,
+    title: `Room ${room.roomNumber} - ${room.property?.title || "Residential Property"}`,
     description: `Rent Room ${room.roomNumber} for $${room.rentAmount}/mo with verified DoorPlate key and instant online application.`,
   };
 }

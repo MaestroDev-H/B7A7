@@ -49,8 +49,8 @@ This document provides a strict, comprehensive verification of every single assi
 Project Name            : Nestly — Housing & Roommate Management Platform
 Backend Repo            : https://github.com/MaestroDev-H/B7A6
 Frontend Repo           : https://github.com/MaestroDev-H/B7A7
-Live Backend URL        : https://b7a6-backend.vercel.app/api/v1
-Live Frontend URL       : https://nestly-frontend.vercel.app
+Live Backend URL        : https://b7-a6-six.vercel.app/api/v1
+Live Frontend URL       : https://b7-a7.vercel.app/
 API Documentation       : Postman collection in the backend repo (postman/Housing-Platform.postman_collection.json)
 Demo Admin Email        : admin@housing.com
 Demo Admin Password     : Admin@12345
