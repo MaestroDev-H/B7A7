@@ -51,7 +51,7 @@ Backend Repo            : https://github.com/MaestroDev-H/B7A6
 Frontend Repo           : https://github.com/MaestroDev-H/B7A7
 Live Backend URL        : https://b7-a6-six.vercel.app/api/v1
 Live Frontend URL       : https://b7-a7.vercel.app/
-API Documentation       : Postman collection in the backend repo (postman/Housing-Platform.postman_collection.json)
+API Documentation       : https://documenter.getpostman.com/view/55111540/2sBYAxPV5R
 Demo Admin Email        : admin@housing.com
 Demo Admin Password     : Admin@12345
 Demo Owner Email        : owner@housing.com

@@ -18,7 +18,7 @@
 | **Live Backend API** | [https://b7-a6-six.vercel.app/](https://b7-a6-six.vercel.app/) (API base: [https://b7-a6-six.vercel.app/api/v1](https://b7-a6-six.vercel.app/api/v1)) |
 | **Frontend GitHub Repo** | [https://github.com/MaestroDev-H/B7A7](https://github.com/MaestroDev-H/B7A7) |
 | **Backend GitHub Repo** | [https://github.com/MaestroDev-H/B7A6](https://github.com/MaestroDev-H/B7A6) |
-| **Postman API Docs** | Located in Backend repo: `postman/Housing-Platform.postman_collection.json` |
+| **Postman API Docs** | [https://documenter.getpostman.com/view/55111540/2sBYAxPV5R](https://documenter.getpostman.com/view/55111540/2sBYAxPV5R) |
 
 ---
 

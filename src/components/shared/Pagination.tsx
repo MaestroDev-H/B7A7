@@ -1,9 +1,7 @@
-"use client";
-
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export interface PaginationProps {
@@ -25,20 +23,7 @@ export function Pagination({
   onPageChange,
   className,
 }: PaginationProps) {
-  const router = useRouter();
   const count = total !== undefined ? total : totalItems;
-
-  const handlePageChange = (newPage: number) => {
-    if (onPageChange) {
-      onPageChange(newPage);
-      return;
-    }
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      params.set("page", String(newPage));
-      router.push(`?${params.toString()}`);
-    }
-  };
 
   if (totalPages <= 1 && (!count || count <= limit)) {
     return null;
@@ -46,6 +31,45 @@ export function Pagination({
 
   const startItem = (page - 1) * limit + 1;
   const endItem = count !== undefined ? Math.min(page * limit, count) : page * limit;
+
+  const renderNavBtn = (
+    targetPage: number,
+    disabled: boolean,
+    label: string,
+    icon: React.ReactNode
+  ) => {
+    if (disabled) {
+      return (
+        <Button variant="outline" size="icon" className="h-8 w-8" disabled aria-label={label}>
+          {icon}
+        </Button>
+      );
+    }
+
+    if (onPageChange) {
+      return (
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => onPageChange(targetPage)}
+          aria-label={label}
+        >
+          {icon}
+        </Button>
+      );
+    }
+
+    return (
+      <Link
+        href={`?page=${targetPage}`}
+        className={buttonVariants({ variant: "outline", size: "icon", className: "h-8 w-8" })}
+        aria-label={label}
+      >
+        {icon}
+      </Link>
+    );
+  };
 
   return (
     <div
@@ -70,51 +94,15 @@ export function Pagination({
       </div>
 
       <div className="flex items-center space-x-1">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(1)}
-          disabled={page <= 1}
-          aria-label="First page"
-        >
-          <ChevronsLeft className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page <= 1}
-          aria-label="Previous page"
-        >
-          <ChevronLeft className="h-3.5 w-3.5" />
-        </Button>
+        {renderNavBtn(1, page <= 1, "First page", <ChevronsLeft className="h-3.5 w-3.5" />)}
+        {renderNavBtn(page - 1, page <= 1, "Previous page", <ChevronLeft className="h-3.5 w-3.5" />)}
 
         <span className="px-2 text-xs font-medium text-foreground">
           {page} / {Math.max(1, totalPages)}
         </span>
 
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page >= totalPages}
-          aria-label="Next page"
-        >
-          <ChevronRight className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(totalPages)}
-          disabled={page >= totalPages}
-          aria-label="Last page"
-        >
-          <ChevronsRight className="h-3.5 w-3.5" />
-        </Button>
+        {renderNavBtn(page + 1, page >= totalPages, "Next page", <ChevronRight className="h-3.5 w-3.5" />)}
+        {renderNavBtn(totalPages, page >= totalPages, "Last page", <ChevronsRight className="h-3.5 w-3.5" />)}
       </div>
     </div>
   );
