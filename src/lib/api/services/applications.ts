@@ -17,7 +17,7 @@ export const applicationsService = {
     http<Application[]>("/applications/incoming", { params }),
 
   updateStatus: (http: HttpCaller, id: string, status: ApplicationStatus): Promise<Application> =>
-    http<Application>(`/applications/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+    http<Application>(`/applications/${id}/review`, { method: "PATCH", body: JSON.stringify({ status }) }),
 
   withdraw: (http: HttpCaller, id: string): Promise<Application> =>
     http<Application>(`/applications/${id}/withdraw`, { method: "PATCH" }),

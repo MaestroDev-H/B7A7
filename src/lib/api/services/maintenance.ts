@@ -27,7 +27,7 @@ export const maintenanceService = {
     http: HttpCaller,
     params?: { status?: MaintenanceStatus; priority?: MaintenancePriority; propertyId?: string }
   ): Promise<MaintenanceRequest[]> =>
-    http<MaintenanceRequest[]>("/maintenance/incoming", { params }),
+    http<MaintenanceRequest[]>("/maintenance", { params }),
 
   updateStatus: (http: HttpCaller, id: string, status: MaintenanceStatus): Promise<MaintenanceRequest> =>
     http<MaintenanceRequest>(`/maintenance/${id}/status`, {

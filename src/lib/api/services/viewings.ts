@@ -11,7 +11,7 @@ export const viewingsService = {
     http<ViewingRequest>("/viewings", { method: "POST", body: JSON.stringify(dto) }),
 
   getMyViewings: (http: HttpCaller): Promise<ViewingRequest[]> =>
-    http<ViewingRequest[]>("/viewings/my-viewings"),
+    http<ViewingRequest[]>("/viewings/my-requests"),
 
   getIncoming: (http: HttpCaller, params?: { status?: ViewingStatus }): Promise<ViewingRequest[]> =>
     http<ViewingRequest[]>("/viewings/incoming", { params }),

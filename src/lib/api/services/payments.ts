@@ -13,7 +13,7 @@ export const paymentsService = {
     }),
 
   getHistory: (http: HttpCaller, params?: { status?: string }): Promise<Payment[]> =>
-    http<Payment[]>("/payments/history", { params }),
+    http<Payment[]>("/payments/my-payments", { params }),
 
   getInvoiceById: (http: HttpCaller, invoiceId: string): Promise<Invoice> =>
     http<Invoice>(`/payments/invoices/${invoiceId}`),
