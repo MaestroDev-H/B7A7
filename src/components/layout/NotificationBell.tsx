@@ -61,7 +61,7 @@ export function NotificationBell() {
   // Poll unread notifications every 60s
   const { data: notifications = [], isLoading } = useNotifications(true);
 
-  const markOneMutation = useOptimisticMarkNotificationRead("");
+  const markOneMutation = useOptimisticMarkNotificationRead();
   const markAllMutation = useMarkAllNotificationsRead();
 
   const unreadCount = notifications.length;
@@ -76,8 +76,8 @@ export function NotificationBell() {
   };
 
   const handleItemClick = (notif: Notification) => {
-    if (!notif.isRead) {
-      markOneMutation.mutate();
+    if (!notif.isRead && notif.id) {
+      markOneMutation.mutate(notif.id);
     }
     setIsOpen(false);
     const link =

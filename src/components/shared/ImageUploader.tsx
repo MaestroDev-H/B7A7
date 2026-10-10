@@ -143,24 +143,35 @@ export function ImageUploader({
       try {
         // Compress client-side
         const processedFile = await compressImage(rawFile);
+        let finalUrl = "";
 
-        const res = await uploadsService.uploadFile(
-          clientFetch,
-          processedFile,
-          folder,
-          (percent) => {
-            setUploadingFiles((prev) =>
-              prev.map((f) => (f.id === fileId ? { ...f, progress: Math.max(10, percent) } : f))
-            );
-          }
-        );
+        try {
+          const res = await uploadsService.uploadFile(
+            clientFetch,
+            processedFile,
+            folder,
+            (percent) => {
+              setUploadingFiles((prev) =>
+                prev.map((f) => (f.id === fileId ? { ...f, progress: Math.max(10, percent) } : f))
+              );
+            }
+          );
+          finalUrl = res?.url || "";
+        } catch {
+          // Cloudinary / Backend upload fallback: convert compressed file to Data URL
+          finalUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(processedFile);
+          });
+          toast.info(`Cloudinary unavailable — saved image via client preview fallback.`);
+        }
 
-        // Success - remove from uploading and add to value
-        setUploadingFiles((prev) => prev.filter((f) => f.id !== fileId));
-        URL.revokeObjectURL(previewUrl);
-
-        if (res?.url) {
-          const nextUrls = [...currentUrls, res.url];
+        if (finalUrl) {
+          setUploadingFiles((prev) => prev.filter((f) => f.id !== fileId));
+          URL.revokeObjectURL(previewUrl);
+          const nextUrls = [...currentUrls, finalUrl];
           startTransition(() => {
             onChange?.(nextUrls);
           });

@@ -16,15 +16,17 @@ export function useNotifications(unreadOnly = false) {
   });
 }
 
-export function useOptimisticMarkNotificationRead(id: string) {
-  return useOptimisticMutation<Notification, void, Notification[]>({
-    mutationFn: () => notificationsService.markAsRead(clientFetch, id),
-    queryKey: queryKeys.notifications.all(false),
-    updateFn: (old: Notification[] | undefined) => {
-      if (!Array.isArray(old)) return old;
-      return old.map((n) => (n.id === id ? { ...n, isRead: true } : n));
+export function useOptimisticMarkNotificationRead(id?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (targetId?: string) => {
+      const finalId = targetId || id;
+      if (!finalId) return Promise.resolve({} as Notification);
+      return notificationsService.markAsRead(clientFetch, finalId);
     },
-    invalidateKeys: [queryKeys.notifications.all(true)],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 }
 
