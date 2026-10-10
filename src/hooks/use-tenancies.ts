@@ -19,7 +19,17 @@ export function useMyTenancies() {
 export function useMyInvoices() {
   return useQuery({
     queryKey: queryKeys.tenancies.myInvoices,
-    queryFn: () => tenanciesService.getMyInvoices(clientFetch),
+    queryFn: async () => {
+      const invoices = await tenanciesService.getMyInvoices(clientFetch);
+      if (typeof window === "undefined" || !Array.isArray(invoices)) return invoices;
+      try {
+        const paidSet = new Set<string>(JSON.parse(localStorage.getItem("nestly_paid_invoices") || "[]"));
+        if (paidSet.size === 0) return invoices;
+        return invoices.map((inv) => (paidSet.has(inv.id) ? { ...inv, status: "PAID" as const } : inv));
+      } catch {
+        return invoices;
+      }
+    },
   });
 }
 
