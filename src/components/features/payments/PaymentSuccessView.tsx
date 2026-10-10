@@ -25,7 +25,9 @@ export function PaymentSuccessView() {
   const invoiceId = searchParams.get("invoiceId");
   const queryClient = useQueryClient();
 
-  const [status, setStatus] = useState<"POLLING" | "PAID" | "TIMEOUT" | "ERROR">("POLLING");
+  const [status, setStatus] = useState<"POLLING" | "PAID" | "TIMEOUT" | "ERROR">(() =>
+    !invoiceId ? "ERROR" : "POLLING"
+  );
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [attempts, setAttempts] = useState(0);
 
@@ -60,7 +62,6 @@ export function PaymentSuccessView() {
 
   useEffect(() => {
     if (!invoiceId) {
-      setStatus("ERROR");
       return;
     }
 

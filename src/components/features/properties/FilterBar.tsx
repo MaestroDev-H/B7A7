@@ -43,14 +43,19 @@ export function FilterBar() {
   const debouncedSearch = useDebounce(searchTerm, 400);
   const debouncedCity = useDebounce(cityTerm, 400);
 
-  // Sync state if URL params change externally
-  React.useEffect(() => {
-    setSearchTerm(currentSearch);
-  }, [currentSearch]);
+  const [prevSearch, setPrevSearch] = React.useState(currentSearch);
+  const [prevCity, setPrevCity] = React.useState(currentCity);
 
-  React.useEffect(() => {
+  // Sync state if URL params change externally
+  if (prevSearch !== currentSearch) {
+    setPrevSearch(currentSearch);
+    setSearchTerm(currentSearch);
+  }
+
+  if (prevCity !== currentCity) {
+    setPrevCity(currentCity);
     setCityTerm(currentCity);
-  }, [currentCity]);
+  }
 
   // Helper to update search params
   const updateQuery = React.useCallback(

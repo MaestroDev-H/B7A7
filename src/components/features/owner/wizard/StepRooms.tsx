@@ -14,12 +14,12 @@ import { toast } from "sonner";
 export default function StepRooms() {
   const { rooms, setRooms, nextStep, prevStep } = usePropertyWizardStore();
 
-  const [localRooms, setLocalRooms] = useState<WizardRoom[]>(
+  const [localRooms, setLocalRooms] = useState<WizardRoom[]>(() =>
     rooms.length > 0
       ? rooms
       : [
           {
-            id: `room-${Date.now()}`,
+            id: "room-default-1",
             roomNumber: "A-101",
             capacity: 1,
             rentAmount: 800,

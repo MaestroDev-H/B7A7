@@ -53,7 +53,7 @@ export default function ContactPage() {
       )}&body=${encodeURIComponent(
         `Name: ${values.name}\nEmail: ${values.email}\n\nMessage:\n${values.message}`
       )}`;
-      window.location.href = mailtoUrl;
+      window.location.assign(mailtoUrl);
       toast.success("Opening your email client to send message...");
       setIsSubmitting(false);
       return;
