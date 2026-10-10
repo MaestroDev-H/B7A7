@@ -26,7 +26,7 @@ import { enumLabel } from "@/lib/format";
 import type { Property } from "@/lib/api/types";
 
 const API_BASE_URL = (
-  process.env.API_BASE_URL || "http://localhost:5000/api/v1"
+  process.env.API_BASE_URL || "https://b7-a6-six.vercel.app/api/v1"
 ).replace(/\/$/, "");
 
 async function getPropertyById(id: string): Promise<Property | null> {

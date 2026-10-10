@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { refreshSession } from "@/lib/auth/refresh";
 
 const API_BASE_URL = (
-  process.env.API_BASE_URL || "http://localhost:5000/api/v1"
+  process.env.API_BASE_URL || "https://b7-a6-six.vercel.app/api/v1"
 ).replace(/\/$/, "");
 
 async function handleProxy(
@@ -13,6 +13,14 @@ async function handleProxy(
   const { path } = await context.params;
   const targetPath = path.join("/");
   const queryString = req.nextUrl.search;
+
+  if (targetPath === "payments/success") {
+    return NextResponse.redirect(new URL(`/payment/success${queryString}`, req.url), 302);
+  }
+  if (targetPath === "payments/cancel") {
+    return NextResponse.redirect(new URL(`/payment/cancel${queryString}`, req.url), 302);
+  }
+
   const targetUrl = `${API_BASE_URL}/${targetPath}${queryString}`;
 
   const cookieStore = await cookies();

@@ -22,6 +22,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/api/v1/payments/success",
+        destination: "/payment/success",
+        permanent: false,
+      },
+      {
+        source: "/api/v1/payments/cancel",
+        destination: "/payment/cancel",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);
