@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCurrentUser, useUpdateProfile, useChangePassword } from "@/hooks/use-users";
 import { logoutAction } from "@/actions/auth";
+import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/format";
 
@@ -94,7 +95,21 @@ export function ProfileSettings() {
       setIsLoggingOut(true);
 
       setTimeout(async () => {
-        await logoutAction();
+        try {
+          useAuthStore.getState().clearUser();
+          await logoutAction();
+        } catch (err: unknown) {
+          const isRedirect =
+            (err instanceof Error && err.message.includes("NEXT_REDIRECT")) ||
+            (typeof err === "object" &&
+              err !== null &&
+              "digest" in err &&
+              typeof (err as { digest: string }).digest === "string" &&
+              (err as { digest: string }).digest.startsWith("NEXT_REDIRECT"));
+          if (!isRedirect) {
+            window.location.href = "/login";
+          }
+        }
       }, 1500);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to change password";

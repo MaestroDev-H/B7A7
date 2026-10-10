@@ -60,8 +60,18 @@ export function UserMenu() {
     try {
       clearUser();
       await logoutAction();
-    } catch {
-      toast.error("Logout failed");
+    } catch (err: unknown) {
+      const isRedirect =
+        (err instanceof Error && err.message.includes("NEXT_REDIRECT")) ||
+        (typeof err === "object" &&
+          err !== null &&
+          "digest" in err &&
+          typeof (err as { digest: string }).digest === "string" &&
+          (err as { digest: string }).digest.startsWith("NEXT_REDIRECT"));
+
+      if (!isRedirect) {
+        toast.error("Logout failed");
+      }
     } finally {
       setIsLoggingOut(false);
     }
