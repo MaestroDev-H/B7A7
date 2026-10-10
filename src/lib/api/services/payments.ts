@@ -15,6 +15,9 @@ export const paymentsService = {
   getHistory: (http: HttpCaller, params?: { status?: string }): Promise<Payment[]> =>
     http<Payment[]>("/payments/my-payments", { params }),
 
+  getPaymentStatus: (http: HttpCaller, paymentId: string): Promise<Payment> =>
+    http<Payment>(`/payments/${paymentId}`),
+
   getInvoiceById: (http: HttpCaller, invoiceId: string): Promise<Invoice> =>
     http<Invoice>(`/payments/invoices/${invoiceId}`),
 };

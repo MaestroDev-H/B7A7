@@ -19,8 +19,8 @@ export const usersService = {
     http<User>("/users/me", { method: "PATCH", body: JSON.stringify(dto) }),
 
   changePassword: (http: HttpCaller, dto: ChangePasswordDto): Promise<{ success: boolean; message: string }> =>
-    http<{ success: boolean; message: string }>("/users/change-password", {
-      method: "POST",
+    http<{ success: boolean; message: string }>("/auth/change-password", {
+      method: "PATCH",
       body: JSON.stringify(dto),
     }),
 
@@ -34,5 +34,5 @@ export const usersService = {
     http<User>(`/users/${userId}/role`, { method: "PATCH", body: JSON.stringify({ role }) }),
 
   deactivateUser: (http: HttpCaller, userId: string): Promise<User> =>
-    http<User>(`/users/${userId}/deactivate`, { method: "PATCH" }),
+    http<User>(`/users/${userId}`, { method: "DELETE" }),
 };

@@ -8,11 +8,11 @@ export const uploadsService = {
   uploadFile: async (
     http: HttpCaller,
     file: File,
-    folder = "nestly",
+    folder = "properties",
     onProgress?: (percent: number) => void
   ): Promise<UploadResponse> => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("images", file);
     return http<UploadResponse>(`/uploads?folder=${folder}`, {
       method: "POST",
       body: formData,
