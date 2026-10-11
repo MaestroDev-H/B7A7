@@ -12,6 +12,16 @@ export const paymentsService = {
       body: JSON.stringify({ invoiceId }),
     }),
 
+  verify: (
+    http: HttpCaller,
+    invoiceId: string,
+    sessionId?: string
+  ): Promise<{ invoice: Invoice; status: string }> =>
+    http<{ invoice: Invoice; status: string }>("/payments/verify", {
+      method: "POST",
+      body: JSON.stringify({ invoiceId, sessionId }),
+    }),
+
   getHistory: (http: HttpCaller, params?: { status?: string }): Promise<Payment[]> =>
     http<Payment[]>("/payments/my-payments", { params }),
 

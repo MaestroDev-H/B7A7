@@ -14,6 +14,8 @@ import { MoneyText } from "@/components/shared/MoneyText";
 import { DoorPlate } from "@/components/shared/DoorPlate";
 import { clientFetch } from "@/lib/api/http.client";
 import { tenanciesService } from "@/lib/api/services/tenancies";
+import { paymentsService } from "@/lib/api/services/payments";
+import { queryKeys } from "@/lib/queries/keys";
 import { formatDate } from "@/lib/format";
 import type { Invoice } from "@/lib/api/types";
 
@@ -23,6 +25,7 @@ const POLL_INTERVAL_MS = 2000;
 export function PaymentSuccessView() {
   const searchParams = useSearchParams();
   const invoiceId = searchParams.get("invoiceId");
+  const sessionId = searchParams.get("session_id") || searchParams.get("sessionId");
   const queryClient = useQueryClient();
 
   const [status, setStatus] = useState<"POLLING" | "PAID" | "TIMEOUT" | "ERROR">(() =>
@@ -31,47 +34,42 @@ export function PaymentSuccessView() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [attempts, setAttempts] = useState(0);
 
-  const isPollingRef = useRef(false);
-
-  const markInvoicePaidLocally = (id: string) => {
-    if (typeof window === "undefined" || !id) return;
-    try {
-      const paidSet = new Set<string>(JSON.parse(localStorage.getItem("nestly_paid_invoices") || "[]"));
-      paidSet.add(id);
-      localStorage.setItem("nestly_paid_invoices", JSON.stringify(Array.from(paidSet)));
-    } catch {}
-  };
-
   const checkInvoice = async () => {
     if (!invoiceId) {
       setStatus("ERROR");
-      return;
+      return true;
     }
 
-    // Since the user was redirected back from Stripe Checkout success_url,
-    // mark invoice as paid in client session state
-    markInvoicePaidLocally(invoiceId);
-
     try {
+      // 1. Ask backend to verify the Stripe Checkout Session
+      await paymentsService
+        .verify(clientFetch, invoiceId, sessionId || undefined)
+        .catch(() => {});
+
+      // 2. Fetch fresh invoices from backend to see true database status
       const invoices = await tenanciesService.getMyInvoices(clientFetch);
       const found = invoices.find((i) => i.id === invoiceId);
 
       if (found) {
-        const paidInvoice: Invoice = { ...found, status: "PAID" };
-        setInvoice(paidInvoice);
-        setStatus("PAID");
-        // Invalidate related cache
-        queryClient.invalidateQueries({ queryKey: ["tenancies"] });
-        queryClient.invalidateQueries({ queryKey: ["payments"] });
-        queryClient.invalidateQueries({ queryKey: ["notifications"] });
-        return true;
+        if (found.status === "PAID") {
+          setInvoice(found);
+          setStatus("PAID");
+          // Invalidate related caches
+          queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.myInvoices });
+          queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.mine });
+          queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.all() });
+          queryClient.invalidateQueries({ queryKey: ["payments"] });
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+          return true;
+        } else {
+          setInvoice(found);
+        }
       }
     } catch {
-      // Fallback if network fails
+      // Fallback if network momentarily fails
     }
 
-    setStatus("PAID");
-    return true;
+    return false;
   };
 
   useEffect(() => {

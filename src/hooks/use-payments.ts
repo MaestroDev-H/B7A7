@@ -36,3 +36,17 @@ export function useInitiatePayment() {
     },
   });
 }
+
+export function useVerifyPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ invoiceId, sessionId }: { invoiceId: string; sessionId?: string }) =>
+      paymentsService.verify(clientFetch, invoiceId, sessionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.myInvoices });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenancies.mine });
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
